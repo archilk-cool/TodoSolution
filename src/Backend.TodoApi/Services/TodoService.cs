@@ -1,7 +1,6 @@
 ﻿using Backend.TodoApi.Data;
 using Backend.TodoApi.Dtos.V1;
 using Backend.TodoApi.Mappings;
-using Backend.TodoApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.TodoApi.Services;
