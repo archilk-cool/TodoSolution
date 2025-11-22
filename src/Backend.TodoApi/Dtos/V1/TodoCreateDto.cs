@@ -1,4 +1,6 @@
-﻿public class TodoCreateDto
+﻿namespace Backend.TodoApi.Dtos.V1;
+
+public class TodoCreateDto
 {
    public string Title { get; set; } = string.Empty;
    public string? Description { get; set; }

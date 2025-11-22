@@ -1,4 +1,6 @@
-﻿public class TodoResponseDto
+﻿namespace Backend.TodoApi.Dtos.V1;
+
+public class TodoResponseDto
 {
    public int Id { get; set; }
    public string Title { get; set; } = string.Empty;

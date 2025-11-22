@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Backend.TodoApi.Data;
+using Backend.TodoApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,9 @@ builder.Services.AddSwaggerGen();
 // EF Core SQLite
 var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=todo.db";
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+
+// Dependency Injection for services
+builder.Services.AddScoped<ITodoService, TodoService>();
 
 var app = builder.Build();
 

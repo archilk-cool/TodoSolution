@@ -1,5 +1,7 @@
 ﻿using Backend.TodoApi.Models;
+using Backend.TodoApi.Dtos.V1;
 
+namespace Backend.TodoApi.Mappings;
 public static class TodoMappings
 {
    public static TodoResponseDto ToDto(this TodoItem item)
