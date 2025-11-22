@@ -1,0 +1,88 @@
+# ===============================
+# GLOBAL IGNORES
+# ===============================
+*.DS_Store
+*.tmp
+*.log
+*.user
+*.suo
+
+# ===============================
+# VISUAL STUDIO / IDE
+# ===============================
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# ===============================
+# DOTNET BUILD ARTIFACTS
+# ===============================
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# ASP.NET static assets cache
+**/staticwebassets/
+**/staticwebassets.build.json
+**/staticwebassets.endpoints.json
+**/staticwebassets.build.json.cache
+**/staticwebassets.removed.txt
+**/staticwebassets.references.upToDateCheck.txt
+**/*.rjsm*.cache.json
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+project.assets.json
+project.nuget.cache
+packages/
+*.nupkg
+
+# SQLite database (keep? or ignore?)
+# If you DO NOT want your local data committed, ignore it:
+**/todo.db
+
+# ===============================
+# FRONTEND (VITE + NODE)
+# ===============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Vite dev cache
+**/.vite/
+
+# Build outputs
+dist/
+build/
+
+# ===============================
+# ENVIRONMENT FILES
+# ===============================
+.env
+.env.*
+!.env.example
+
+# ===============================
+# FRONTEND FRAMEWORK / TOOLS
+# ===============================
+# TypeScript
+*.tsbuildinfo
+
+# ===============================
+# OS-SPECIFIC
+# ===============================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===============================
+# OTHER ROOT FILES TO IGNORE
+# ===============================
+TodoSolution.slnLaunch.user
