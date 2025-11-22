@@ -86,3 +86,5 @@ Desktop.ini
 # OTHER ROOT FILES TO IGNORE
 # ===============================
 TodoSolution.slnLaunch.user
+/src/Backend.TodoApi/todo.db-shm
+/src/Backend.TodoApi/todo.db-wal
