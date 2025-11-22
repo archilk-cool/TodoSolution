@@ -1,10 +1,15 @@
-
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Backend.TodoApi.Data;
 using Backend.TodoApi.Middleware;
 using Backend.TodoApi.Services;
 using Microsoft.EntityFrameworkCore;
+
+using Backend.TodoApi.Swagger;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,9 +42,10 @@ builder.Services
        options.SubstituteApiVersionInUrl = true;
     });
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
 builder.Services.AddTransient<ErrorHandlingMiddleware>();
 
 // EF Core SQLite
@@ -83,7 +89,6 @@ if (app.Environment.IsDevelopment())
    });
 }
 
-app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
