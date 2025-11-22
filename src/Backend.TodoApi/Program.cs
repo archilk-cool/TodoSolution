@@ -3,13 +3,8 @@ using Asp.Versioning.ApiExplorer;
 using Backend.TodoApi.Data;
 using Backend.TodoApi.Middleware;
 using Backend.TodoApi.Services;
-using Microsoft.EntityFrameworkCore;
-
 using Backend.TodoApi.Swagger;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
