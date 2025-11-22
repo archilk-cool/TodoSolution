@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Backend.TodoApi.Data;
+using Backend.TodoApi.Middleware;
 using Backend.TodoApi.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +40,7 @@ builder.Services
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<ErrorHandlingMiddleware>();
 
 // EF Core SQLite
 var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=todo.db";
@@ -58,6 +60,9 @@ using (var scope = app.Services.CreateScope())
    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
    db.Database.EnsureCreated();
 }
+
+// GLOBAL ERROR HANDLING
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

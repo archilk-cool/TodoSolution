@@ -7,52 +7,57 @@ namespace Backend.TodoApi.Services;
 
 public class TodoService : ITodoService
 {
-    private readonly AppDbContext _db;
+   private readonly AppDbContext _db;
 
-    public TodoService(AppDbContext db)
-    {
-        _db = db;
-    }
+   public TodoService(AppDbContext db)
+   {
+      _db = db;
+   }
 
-    public async Task<IEnumerable<TodoResponseDto>> GetAllAsync()
-    {
-        return await _db.Todos
-            .OrderBy(t => t.Id)
-            .Select(t => t.ToDto())
-            .ToListAsync();
-    }
+   public async Task<IEnumerable<TodoResponseDto>> GetAllAsync()
+   {
+      return await _db.Todos
+          .OrderBy(t => t.Id)
+          .Select(t => t.ToDto())
+          .ToListAsync();
+   }
 
-    public async Task<TodoResponseDto?> GetAsync(int id)
-    {
-        var item = await _db.Todos.FindAsync(id);
-        return item?.ToDto();
-    }
+   public async Task<TodoResponseDto?> GetAsync(int id)
+   {
+      var item = await _db.Todos.FindAsync(id);
+      return item?.ToDto();
+   }
 
-    public async Task<TodoResponseDto> CreateAsync(TodoCreateDto dto)
-    {
-        var entity = dto.ToEntity();
-        _db.Todos.Add(entity);
-        await _db.SaveChangesAsync();
-        return entity.ToDto();
-    }
+   public async Task<TodoResponseDto> CreateAsync(TodoCreateDto dto)
+   {
+      if (dto.DueAt.HasValue && dto.DueAt.Value < DateTime.UtcNow)
+      {
+         throw new ArgumentException("Due date cannot be in the past.");
+      }
 
-    public async Task<bool> UpdateAsync(int id, TodoUpdateDto dto)
-    {
-        var entity = await _db.Todos.FindAsync(id);
-        if (entity == null) return false;
+      var entity = dto.ToEntity();
+      _db.Todos.Add(entity);
+      await _db.SaveChangesAsync();
+      return entity.ToDto();
+   }
 
-        dto.MapToEntity(entity);
-        await _db.SaveChangesAsync();
-        return true;
-    }
+   public async Task<bool> UpdateAsync(int id, TodoUpdateDto dto)
+   {
+      var entity = await _db.Todos.FindAsync(id);
+      if (entity == null) return false;
 
-    public async Task<bool> DeleteAsync(int id)
-    {
-        var entity = await _db.Todos.FindAsync(id);
-        if (entity == null) return false;
+      dto.MapToEntity(entity);
+      await _db.SaveChangesAsync();
+      return true;
+   }
 
-        _db.Todos.Remove(entity);
-        await _db.SaveChangesAsync();
-        return true;
-    }
+   public async Task<bool> DeleteAsync(int id)
+   {
+      var entity = await _db.Todos.FindAsync(id);
+      if (entity == null) return false;
+
+      _db.Todos.Remove(entity);
+      await _db.SaveChangesAsync();
+      return true;
+   }
 }
