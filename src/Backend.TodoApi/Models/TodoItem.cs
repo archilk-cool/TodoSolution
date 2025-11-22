@@ -54,6 +54,6 @@ namespace Backend.TodoApi.Models
         /// <remarks>
         /// Nullable — use when the item has a deadline. Prefer UTC for consistency.
         /// </remarks>
-        public DateTime? DueAt { get; set; }
+        public DateTime? DueDate { get; set; }
     }
 }

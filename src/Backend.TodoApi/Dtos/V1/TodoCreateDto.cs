@@ -7,7 +7,7 @@ namespace Backend.TodoApi.Dtos.V1;
 /// </summary>
 /// <remarks>
 /// Validation attributes are applied to enforce required fields and length limits.
-/// Business rules that require context (for example ensuring <see cref="DueAt"/> is in the future)
+/// Business rules that require context (for example ensuring <see cref="DueDate"/> is in the future)
 /// are enforced in the service layer.
 /// </remarks>
 public class TodoCreateDto
@@ -39,5 +39,5 @@ public class TodoCreateDto
    /// <see cref="DataType.DateTime"/> indicates the expected format but does not validate value range.
    /// </remarks>
    [DataType(DataType.DateTime)]
-   public DateTime? DueAt { get; set; }
+   public DateTime? DueDate { get; set; }
 }

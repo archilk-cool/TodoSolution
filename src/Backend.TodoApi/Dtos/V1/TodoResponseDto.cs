@@ -33,5 +33,5 @@ public class TodoResponseDto
    /// <summary>
    /// Optional UTC due date/time for the item.
    /// </summary>
-   public DateTime? DueAt { get; set; }
+   public DateTime? DueDate { get; set; }
 }

@@ -32,7 +32,7 @@ public static class TodoMappings
           Description = item.Description,
           IsCompleted = item.IsCompleted,
           CreatedAt = item.CreatedAt,
-          DueAt = item.DueAt
+          DueDate = item.DueDate
        };
 
    /// <summary>
@@ -49,7 +49,7 @@ public static class TodoMappings
        {
           Title = dto.Title,
           Description = dto.Description,
-          DueAt = dto.DueAt,
+          DueDate = dto.DueDate,
           CreatedAt = DateTime.UtcNow
        };
 
@@ -68,6 +68,6 @@ public static class TodoMappings
       entity.Title = dto.Title;
       entity.Description = dto.Description;
       entity.IsCompleted = dto.IsCompleted;
-      entity.DueAt = dto.DueAt;
+      entity.DueDate = dto.DueDate;
    }
 }

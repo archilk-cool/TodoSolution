@@ -42,5 +42,5 @@ public class TodoUpdateDto
    /// Nullable — if provided the application should ensure it is not a past date.
    /// </remarks>
    [DataType(DataType.DateTime)]
-   public DateTime? DueAt { get; set; }
+   public DateTime? DueDate { get; set; }
 }

@@ -34,7 +34,7 @@ public interface ITodoService
    /// <param name="dto">DTO containing values required to create the item.</param>
    /// <returns>The created item mapped to <see cref="TodoResponseDto"/>.</returns>
    /// <exception cref="ArgumentException">
-   /// Thrown when the provided <c>DueAt</c> value (if present) is invalid (e.g. in the past).
+   /// Thrown when the provided <c>DueDate</c> value (if present) is invalid (e.g. in the past).
    /// </exception>
    Task<TodoResponseDto> CreateAsync(TodoCreateDto dto);
 

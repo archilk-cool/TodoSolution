@@ -63,8 +63,8 @@ public class TodoService : ITodoService
    /// <exception cref="ArgumentException">Thrown when the supplied due date is in the past.</exception>
    public async Task<TodoResponseDto> CreateAsync(TodoCreateDto dto)
    {
-      // Enforce business rule: if DueAt is provided it must not be in the past.
-      if (dto.DueAt.HasValue && dto.DueAt.Value < DateTime.UtcNow)
+      // Enforce business rule: if DueDate is provided it must not be in the past.
+      if (dto.DueDate.HasValue && dto.DueDate.Value < DateTime.UtcNow)
       {
          throw new ArgumentException("Due date cannot be in the past.");
       }
