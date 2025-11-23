@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { createTodo, deleteTodo, getTodos, updateTodo } from "./api/todoApi";
+import EmptyState from "./components/EmptyState";
+import FilterTabs from "./components/FilterTabs";
 import TaskInput from "./components/TaskInput";
 import TaskItem from "./components/TaskItem";
-import FilterTabs from "./components/FilterTabs";
-import EmptyState from "./components/EmptyState";
-import { getTodos, createTodo, updateTodo, deleteTodo } from "./api/todoApi";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
 
 export default function App() {
    const [todos, setTodos] = useState([]);
@@ -13,14 +12,19 @@ export default function App() {
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
 
+   const firstLoadRef = useRef(true);
+
    async function load() {
       setLoading(true);
       setError(null);
       try {
          const data = await getTodos();
 
-         // Simulated slow network:
-         await new Promise(resolve => setTimeout(resolve, 1200));
+         // Only delay on the very first load
+         if (firstLoadRef.current) {
+            await new Promise(resolve => setTimeout(resolve, 1200));
+            firstLoadRef.current = false;  // mark as done
+         }
 
          // Backend returns: { id, title, description, isCompleted, dueDate }
          // UI expects: { id, text, description, dueDate, completed }
@@ -144,12 +148,7 @@ export default function App() {
    }
 
    return (
-      <motion.div
-         initial={{ opacity: 0, y: 10 }}
-         animate={{ opacity: 1, y: 0 }}
-         transition={{ duration: 0.5, ease: "easeOut" }}
-         className="min-h-screen bg-muted/80 text-foreground flex items-start justify-center px-4 py-10"
-      >
+      <div className="min-h-screen bg-muted/80 text-foreground flex items-start justify-center px-4 py-10">
          {/* Centered "page" like Notion */}
          <div className="w-full max-w-3xl rounded-2xl bg-background border border-border shadow-lg px-6 py-7">
             <header className="mb-6 flex items-baseline justify-between gap-4">
@@ -204,6 +203,6 @@ export default function App() {
                </div>
             </div>
          </div>
-      </motion.div>
+      </div>
    );
 }
