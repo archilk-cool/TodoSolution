@@ -10,16 +10,7 @@ import { format } from "date-fns";
 
 const TaskItem = React.forwardRef(
    (
-      {
-         id,
-         text,
-         description,
-         dueDate,
-         completed,
-         onToggle,
-         onEdit,
-         onDelete,
-      },
+      { id, text, description, dueDate, completed, onToggle, onEdit, onDelete },
       ref
    ) => {
       const [isEditing, setIsEditing] = useState(false);
@@ -28,9 +19,7 @@ const TaskItem = React.forwardRef(
          description || ""
       );
       const [editDueDate, setEditDueDate] = useState(
-         dueDate
-            ? format(new Date(dueDate), "yyyy-MM-dd'T'HH:mm")
-            : ""
+         dueDate ? format(new Date(dueDate), "yyyy-MM-dd'T'HH:mm") : ""
       );
       const [isHovered, setIsHovered] = useState(false);
 
@@ -65,37 +54,51 @@ const TaskItem = React.forwardRef(
       const isDueSoon =
          dueDate &&
          !completed &&
-         new Date(dueDate) <
-         new Date(Date.now() + 24 * 60 * 60 * 1000);
+         new Date(dueDate) < new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       const isOverdue =
-         dueDate &&
-         !completed &&
-         new Date(dueDate) < new Date();
+         dueDate && !completed && new Date(dueDate) < new Date();
+
+      // Choose left-bar color based on status
+      const barClass = cn(
+         "w-1 rounded-full mt-1",
+         completed
+            ? "bg-muted-foreground/40"
+            : isOverdue
+               ? "bg-destructive"
+               : isDueSoon
+                  ? "bg-orange-500"
+                  : "bg-primary"
+      );
 
       return (
          <motion.div
-            ref={ref} // <-- required for framer-motion; fixes the warning
+            ref={ref} // required for framer-motion
             data-testid={`task-item-${id}`}
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={{ duration: 0.18 }}
             className={cn(
-               "group flex flex-col gap-3 p-4 rounded-md border bg-card hover-elevate",
+               "group flex gap-3 rounded-xl border border-border bg-background px-4 py-3 shadow-sm transition hover:bg-muted/60 hover:shadow-md",
                completed && "opacity-60"
             )}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
          >
-            <div className="flex items-start gap-3">
+            {/* Left accent bar */}
+            <div className={barClass} />
+
+            <div className="flex flex-1 items-start gap-3">
+               {/* Checkbox */}
                <Checkbox
                   data-testid={`checkbox-task-${id}`}
                   checked={completed}
                   onCheckedChange={() => onToggle(id)}
-                  className="h-5 w-5 mt-0.5"
+                  className="mt-1 h-5 w-5"
                />
 
+               {/* Content */}
                {isEditing ? (
                   <div className="flex-1 space-y-3">
                      <Input
@@ -104,8 +107,9 @@ const TaskItem = React.forwardRef(
                         value={editText}
                         onChange={(e) => setEditText(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        className="flex-1"
                         autoFocus
+                        className="!text-lg"
+                        placeholder="Task title"
                      />
 
                      <Textarea
@@ -114,100 +118,103 @@ const TaskItem = React.forwardRef(
                         value={editDescription}
                         onChange={(e) => setEditDescription(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        className="resize-none min-h-[80px]"
+                        className="resize-none min-h-[80px] !text-lg"
                      />
 
-                     <Input
-                        data-testid={`input-edit-due-date-${id}`}
-                        type="datetime-local"
-                        value={editDueDate}
-                        onChange={(e) => setEditDueDate(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                     />
+                     <div className="space-y-3">
+                        <Input
+                           data-testid={`input-edit-due-date-${id}`}
+                           type="datetime-local"
+                           value={editDueDate}
+                           onChange={(e) => setEditDueDate(e.target.value)}
+                           onKeyDown={handleKeyDown}
+                           className="!text-[18px]"
+                        />
 
-                     <div className="flex gap-2">
-                        <Button
-                           data-testid={`button-save-edit-${id}`}
-                           size="sm"
-                           onClick={handleSaveEdit}
-                        >
-                           <Check className="h-4 w-4 mr-2" />
-                           Save
-                        </Button>
+                        <div className="flex gap-3">
+                           <Button
+                              data-testid={`button-save-edit-${id}`}
+                              size="lg"
+                              onClick={handleSaveEdit}
+                              className="text-lg font-medium h-12 px-5"
+                           >
+                              <Check className="h-6 w-6 mr-2" strokeWidth={2.5} />
+                              Save
+                           </Button>
 
-                        <Button
-                           data-testid={`button-cancel-edit-${id}`}
-                           size="sm"
-                           variant="ghost"
-                           onClick={handleCancelEdit}
-                        >
-                           <X className="h-4 w-4 mr-2" />
-                           Cancel
-                        </Button>
+                           <Button
+                              data-testid={`button-cancel-edit-${id}`}
+                              size="lg"
+                              variant="ghost"
+                              onClick={handleCancelEdit}
+                              className="text-lg font-medium h-12 px-5"
+                           >
+                              <X className="h-6 w-6 mr-2" strokeWidth={2.5} />
+                              Cancel
+                           </Button>
+                        </div>
+
                      </div>
                   </div>
                ) : (
-                  <>
-                     <div className="flex-1 space-y-2">
-                        <div className="flex items-start justify-between gap-2">
-                           <span
-                              data-testid={`text-task-${id}`}
-                              className={cn(
-                                 "text-base font-medium",
-                                 completed &&
-                                 "line-through text-muted-foreground"
-                              )}
-                           >
-                              {text}
-                           </span>
+                  <div className="flex-1 space-y-2">
+                     {/* Title + hover actions */}
+                     <div className="flex items-start justify-between gap-2">
+                        {/* Left Side: Task Name */}
+                        <span
+                           data-testid={`text-task-${id}`}
+                           className={cn(
+                              "text-base font-medium",
+                              completed && "line-through text-muted-foreground"
+                           )}
+                        >
+                           {text}
+                        </span>
 
-                           <div
-                              className={cn(
-                                 "flex items-center gap-1 transition-opacity",
-                                 isHovered ? "opacity-100" : "opacity-0"
-                              )}
+                        {/* Right Side: Icons */}
+                        <div className={cn(
+                           // items-start aligns to top, but -mt-1 pulls it up slightly to match text baseline visually
+                           "flex items-center gap-2 -mt-1 transition-opacity",
+                           isHovered ? "opacity-100" : "opacity-0"
+                        )}>
+                           {/* EDIT BUTTON */}
+                           <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                              onClick={() => setIsEditing(true)}
+                              aria-label="Edit task"
                            >
-                              <Button
-                                 data-testid={`button-edit-${id}`}
-                                 size="icon"
-                                 variant="ghost"
-                                 onClick={() => setIsEditing(true)}
-                              >
-                                 <Pencil className="h-4 w-4" />
-                              </Button>
+                              <Pencil className="!h-5 !w-5" /> {/* Suggesting h-5 for better proportion inside h-8 */}
+                           </Button>
 
-                              <Button
-                                 data-testid={`button-delete-${id}`}
-                                 size="icon"
-                                 variant="ghost"
-                                 onClick={() => onDelete(id)}
-                              >
-                                 <Trash2 className="h-4 w-4" />
-                              </Button>
-                           </div>
+                           {/* DELETE BUTTON */}
+                           <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => onDelete(id)}
+                              aria-label="Delete task"
+                           >
+                              <Trash2 className="!h-5 !w-5" />
+                           </Button>
                         </div>
+                     </div>
 
+                     {/* Description + meta */}
+                     <div className="space-y-1.5 text-[16px] text-muted-foreground">
                         {description && (
-                           <div className="flex items-start gap-2 text-sm">
-                              <FileText className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
-                              <span
-                                 data-testid={`text-description-${id}`}
-                                 className={cn(
-                                    "text-muted-foreground",
-                                    completed && "line-through"
-                                 )}
-                              >
-                                 {description}
-                              </span>
+                           <div className="flex items-start gap-2">
+                              <FileText className="h-5 w-5 mt-0.5" />
+                              <span>{description}</span>
                            </div>
                         )}
 
                         {dueDate && (
                            <div
                               className={cn(
-                                 "flex items-center gap-2 text-sm",
-                                 isOverdue &&
-                                 "text-destructive font-medium",
+                                 "flex items-center gap-2 text-[16px]",
+                                 isOverdue && "text-destructive font-medium",
                                  isDueSoon &&
                                  !isOverdue &&
                                  "text-orange-600 dark:text-orange-400 font-medium",
@@ -216,22 +223,19 @@ const TaskItem = React.forwardRef(
                                  "text-muted-foreground"
                               )}
                            >
-                              <Calendar className="h-4 w-4" />
-
+                              <Calendar className="h-5 w-5" />
                               <span data-testid={`text-due-date-${id}`}>
                                  {format(
                                     new Date(dueDate),
                                     "MMM d, yyyy 'at' h:mm a"
                                  )}
                                  {isOverdue && " (Overdue)"}
-                                 {isDueSoon &&
-                                    !isOverdue &&
-                                    " (Due soon)"}
+                                 {isDueSoon && !isOverdue && " (Due soon)"}
                               </span>
                            </div>
                         )}
                      </div>
-                  </>
+                  </div>
                )}
             </div>
          </motion.div>
