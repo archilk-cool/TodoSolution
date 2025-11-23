@@ -5,6 +5,7 @@ import FilterTabs from "./components/FilterTabs";
 import EmptyState from "./components/EmptyState";
 import { getTodos, createTodo, updateTodo, deleteTodo } from "./api/todoApi";
 import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function App() {
    const [todos, setTodos] = useState([]);
@@ -17,6 +18,10 @@ export default function App() {
       setError(null);
       try {
          const data = await getTodos();
+
+         // Simulated slow network:
+         await new Promise(resolve => setTimeout(resolve, 1200));
+
          // Backend returns: { id, title, description, isCompleted, dueDate }
          // UI expects: { id, text, description, dueDate, completed }
          const mapped = (data || []).map((t) => ({
@@ -27,10 +32,12 @@ export default function App() {
             completed: !!t.isCompleted,
          }));
          setTodos(mapped);
-      } catch (err) {
+      }
+      catch (err) {
          console.error(err);
          setError(err.message || "Failed to load tasks");
-      } finally {
+      }
+      finally {
          setLoading(false);
       }
    }
@@ -51,7 +58,8 @@ export default function App() {
                : null,
          });
          await load();
-      } catch (err) {
+      }
+      catch (err) {
          console.error(err);
          setError(err.message || "Failed to create task");
       }
@@ -59,7 +67,10 @@ export default function App() {
 
    async function handleToggleTodo(id) {
       const existing = todos.find((t) => t.id === id);
-      if (!existing) return;
+      if (!existing) {
+         return;
+      }
+
       try {
          await updateTodo(id, {
             id,
@@ -69,7 +80,8 @@ export default function App() {
             dueDate: existing.dueDate || null,
          });
          await load();
-      } catch (err) {
+      }
+      catch (err) {
          console.error(err);
          setError(err.message || "Failed to update task");
       }
@@ -124,7 +136,7 @@ export default function App() {
    if (loading) {
       return (
          <div className="min-h-screen bg-muted/80 flex items-center justify-center">
-            <div className="rounded-xl bg-background border border-border px-4 py-3 shadow-sm text-sm text-muted-foreground">
+            <div className="rounded-xl bg-background border border-border px-4 py-3 shadow-sm text-[18px] text-muted-foreground">
                Loading tasks...
             </div>
          </div>
@@ -132,7 +144,12 @@ export default function App() {
    }
 
    return (
-      <div className="min-h-screen bg-muted/80 text-foreground flex items-start justify-center px-4 py-10">
+      <motion.div
+         initial={{ opacity: 0, y: 10 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.5, ease: "easeOut" }}
+         className="min-h-screen bg-muted/80 text-foreground flex items-start justify-center px-4 py-10"
+      >
          {/* Centered "page" like Notion */}
          <div className="w-full max-w-3xl rounded-2xl bg-background border border-border shadow-lg px-6 py-7">
             <header className="mb-6 flex items-baseline justify-between gap-4">
@@ -145,7 +162,7 @@ export default function App() {
             </header>
 
             {error && (
-               <div className="mb-4 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+               <div className="mb-4 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-[18px] text-destructive">
                   {error}
                </div>
             )}
@@ -187,6 +204,6 @@ export default function App() {
                </div>
             </div>
          </div>
-      </div>
+      </motion.div>
    );
 }
