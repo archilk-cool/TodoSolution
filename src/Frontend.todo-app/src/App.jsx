@@ -223,7 +223,7 @@ export default function App() {
          <div className="w-full max-w-3xl rounded-2xl bg-background border border-border shadow-lg px-6 py-7">
             <header className="mb-6 flex items-baseline justify-between gap-4">
                <div>
-                  <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
+                  <h1 className="text-2xl font-semibold tracking-tight">My To-Do List</h1>
                   <p className="text-lg text-muted-foreground">
                      {counts.active} active • {counts.all} total
                   </p>

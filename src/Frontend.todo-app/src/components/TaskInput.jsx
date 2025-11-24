@@ -61,10 +61,9 @@ export default function TaskInput({ onAdd }) {
                data-testid="button-add-task"
                type="submit"
                disabled={!text.trim()}
-               className="px-5 rounded-full shadow-sm h-11 !text-lg"
+               className="px-5 rounded-lg shadow-sm h-11 !text-lg"
             >
                <Plus strokeWidth={3} className="h-5 w-5 mr-2" />
-
                Add
             </Button>
          </div>

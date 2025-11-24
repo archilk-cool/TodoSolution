@@ -136,9 +136,9 @@ const TaskItem = React.forwardRef(
                               data-testid={`button-save-edit-${id}`}
                               size="lg"
                               onClick={handleSaveEdit}
-                              className="text-lg font-medium h-12 px-5"
+                              className="text-lg font-medium h-10 px-5 rounded-lg"
                            >
-                              <Check className="h-6 w-6 mr-2" strokeWidth={2.5} />
+                              <Check className="h-6 w-6 mr-1" strokeWidth={2.5} />
                               Save
                            </Button>
 
@@ -147,9 +147,9 @@ const TaskItem = React.forwardRef(
                               size="lg"
                               variant="ghost"
                               onClick={handleCancelEdit}
-                              className="text-lg font-medium h-12 px-5"
+                              className="text-lg font-medium h-10 px-5 hover:bg-destructive/10"
                            >
-                              <X className="h-6 w-6 mr-2" strokeWidth={2.5} />
+                              <X className="h-6 w-6 mr-1" strokeWidth={2.5} />
                               Cancel
                            </Button>
                         </div>
