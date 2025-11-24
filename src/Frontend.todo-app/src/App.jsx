@@ -14,20 +14,22 @@ export default function App() {
 
    const firstLoadRef = useRef(true);
 
+   // -------------------------------------------------
+   // Load tasks (initial load only)
+   // -------------------------------------------------
    async function load() {
       setLoading(true);
       setError(null);
+
       try {
          const data = await getTodos();
 
-         // Only delay on the very first load
+         // Only delay UI on very first page load
          if (firstLoadRef.current) {
-            await new Promise(resolve => setTimeout(resolve, 1200));
-            firstLoadRef.current = false;  // mark as done
+            await new Promise((resolve) => setTimeout(resolve, 1200));
+            firstLoadRef.current = false;
          }
 
-         // Backend returns: { id, title, description, isCompleted, dueDate }
-         // UI expects: { id, text, description, dueDate, completed }
          const mapped = (data || []).map((t) => ({
             id: t.id,
             text: t.title,
@@ -35,13 +37,12 @@ export default function App() {
             dueDate: t.dueDate ? new Date(t.dueDate) : null,
             completed: !!t.isCompleted,
          }));
+
          setTodos(mapped);
-      }
-      catch (err) {
+      } catch (err) {
          console.error(err);
-         setError(err.message || "Failed to load tasks");
-      }
-      finally {
+         setError("Failed to load tasks.");
+      } finally {
          setLoading(false);
       }
    }
@@ -50,84 +51,148 @@ export default function App() {
       load();
    }, []);
 
+   // -------------------------------------------------
+   // Backend-first: Add
+   // -------------------------------------------------
    async function handleAddTodo(data) {
-      // data: { text, description, dueDate }
       if (!data?.text?.trim()) return;
+
       try {
-         await createTodo({
+         const saved = await createTodo({
             title: data.text,
             description: data.description || "",
             dueDate: data.dueDate
                ? new Date(data.dueDate).toISOString()
                : null,
          });
-         await load();
-      }
-      catch (err) {
+
+         // Update local state after backend success
+         setTodos((prev) => [
+            ...prev,
+            {
+               id: saved.id,
+               text: saved.title,
+               description: saved.description || "",
+               dueDate: saved.dueDate ? new Date(saved.dueDate) : null,
+               completed: !!saved.isCompleted,
+            },
+         ]);
+      } catch (err) {
          console.error(err);
-         setError(err.message || "Failed to create task");
+         setError("Failed to create task.");
       }
    }
 
+   // -------------------------------------------------
+   // Backend-first: Toggle Complete
+   // -------------------------------------------------
    async function handleToggleTodo(id) {
       const existing = todos.find((t) => t.id === id);
-      if (!existing) {
-         return;
-      }
+      if (!existing) return;
 
       try {
-         await updateTodo(id, {
+         const updated = await updateTodo(id, {
             id,
             title: existing.text,
             description: existing.description || "",
             isCompleted: !existing.completed,
-            dueDate: existing.dueDate || null,
+            dueDate: existing.dueDate,
          });
-         await load();
+
+         // If server returns null (204), fallback to our expected update
+         const completed = updated?.isCompleted ?? !existing.completed;
+
+         setTodos((prev) =>
+            prev.map((t) =>
+               t.id === id
+                  ? {
+                     ...t,
+                     completed,
+                  }
+                  : t
+            )
+         );
       }
       catch (err) {
          console.error(err);
-         setError(err.message || "Failed to update task");
+         setError("Failed to update task.");
       }
    }
 
+
+   // -------------------------------------------------
+   // Backend-first: Edit Task
+   // -------------------------------------------------
    async function handleEditTodo(id, updates) {
       const existing = todos.find((t) => t.id === id);
       if (!existing) return;
 
-      const merged = {
-         ...existing,
-         ...updates,
-      };
+      const merged = { ...existing, ...updates };
 
       try {
-         await updateTodo(id, {
+         const updated = await updateTodo(id, {
             id,
             title: merged.text,
             description: merged.description || "",
-            isCompleted: !!merged.completed,
-            dueDate: merged.dueDate || null,
+            isCompleted: merged.completed,
+            dueDate: merged.dueDate,
          });
-         await load();
-      } catch (err) {
+
+         // If backend returns null, fallback to merged local version
+         const server = updated || {};
+
+         setTodos((prev) =>
+            prev.map((t) =>
+               t.id === id
+                  ? {
+                     id: server.id ?? t.id,
+                     text: server.title ?? merged.text,
+                     description: server.description ?? merged.description,
+                     dueDate: server.dueDate
+                        ? new Date(server.dueDate)
+                        : merged.dueDate,
+                     completed:
+                        server.isCompleted !== undefined
+                           ? server.isCompleted
+                           : merged.completed,
+                  }
+                  : t
+            )
+         );
+      }
+      catch (err) {
          console.error(err);
-         setError(err.message || "Failed to update task");
+         setError("Failed to update task.");
       }
    }
 
+   // -------------------------------------------------
+   // Backend-first: Delete
+   // -------------------------------------------------
    async function handleDeleteTodo(id) {
       try {
          await deleteTodo(id);
-         await load();
-      } catch (err) {
+
+         // Remove only if backend succeeded
+         setTodos((prev) => prev.filter((t) => t.id !== id));
+      }
+      catch (err) {
          console.error(err);
-         setError(err.message || "Failed to delete task");
+         setError("Failed to delete task.");
       }
    }
 
+   // -------------------------------------------------
+   // Filtering
+   // -------------------------------------------------
    const filteredTodos = todos.filter((todo) => {
-      if (filter === "active") return !todo.completed;
-      if (filter === "completed") return todo.completed;
+      if (filter === "active") {
+         return !todo.completed;
+      }
+
+      if (filter === "completed") {
+         return todo.completed;
+      }
       return true;
    });
 
@@ -137,6 +202,9 @@ export default function App() {
       completed: todos.filter((t) => t.completed).length,
    };
 
+   // -------------------------------------------------
+   // Loading Screen
+   // -------------------------------------------------
    if (loading) {
       return (
          <div className="min-h-screen bg-muted/80 flex items-center justify-center">
@@ -147,9 +215,11 @@ export default function App() {
       );
    }
 
+   // -------------------------------------------------
+   // UI
+   // -------------------------------------------------
    return (
       <div className="min-h-screen bg-muted/80 text-foreground flex items-start justify-center px-4 py-10">
-         {/* Centered "page" like Notion */}
          <div className="w-full max-w-3xl rounded-2xl bg-background border border-border shadow-lg px-6 py-7">
             <header className="mb-6 flex items-baseline justify-between gap-4">
                <div>
@@ -167,10 +237,8 @@ export default function App() {
             )}
 
             <div className="space-y-6">
-               {/* Input + collapsible details */}
                <TaskInput onAdd={handleAddTodo} />
 
-               {/* Filters */}
                <div className="flex items-center justify-between gap-3">
                   <FilterTabs
                      activeFilter={filter}
@@ -179,7 +247,6 @@ export default function App() {
                   />
                </div>
 
-               {/* Task blocks */}
                <div className="space-y-2">
                   {filteredTodos.length === 0 ? (
                      <EmptyState filter={filter} />
