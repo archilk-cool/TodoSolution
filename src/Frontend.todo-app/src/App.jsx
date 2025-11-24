@@ -223,8 +223,22 @@ export default function App() {
    if (loading) {
       return (
          <div className="min-h-screen bg-muted/80 dark:bg-black flex items-center justify-center transition-colors">
-            <div className="rounded-xl bg-background border border-border px-4 py-3 shadow-sm text-[18px] text-muted-foreground dark:text-gray-300 dark:bg-gray-900">
-               Loading tasks...
+            <div className="rounded-2xl px-6 py-6 bg-white/20 dark:bg-white/10 backdrop-blur-xl border border-white/30 dark:border-white/10 shadow-lg flex flex-col items-center gap-4">
+
+               {/* Minimal gradient spinner — OPTION 1 */}
+               <div className="relative w-12 h-12 animate-spin">
+                  <div
+                     className="absolute inset-0 rounded-full border-4 border-transparent"
+                     style={{
+                        borderTopColor: "rgba(99,102,241,1)",       // Indigo 500
+                        borderLeftColor: "rgba(167,139,250,0.8)",  // Violet glow
+                     }}
+                  />
+               </div>
+
+               <div className="text-lg font-medium text-foreground dark:text-gray-200">
+                  Loading tasks...
+               </div>
             </div>
          </div>
       );
