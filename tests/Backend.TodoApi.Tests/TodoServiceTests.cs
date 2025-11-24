@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Backend.TodoApi.Data;
 using Backend.TodoApi.Dtos.V1;
 using Backend.TodoApi.Models;
 using Backend.TodoApi.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Backend.TodoApi.Tests;
