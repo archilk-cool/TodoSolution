@@ -25,6 +25,8 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Frontend.todo-app", "src\Fr
 		SlnRelativePath = "src\Frontend.todo-app\"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.TodoApi.Tests", "tests\Backend.TodoApi.Tests\Backend.TodoApi.Tests.csproj", "{12069A2F-3462-3A81-0A2F-5D7DA63688F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,9 +38,12 @@ Global
 		{B1A8F1D4-3E02-4B7A-9A2A-123456789ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1A8F1D4-3E02-4B7A-9A2A-123456789ABC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD39AC7B-5B20-E5F2-5CE0-EA68FE4D335F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD39AC7B-5B20-E5F2-5CE0-EA68FE4D335F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD39AC7B-5B20-E5F2-5CE0-EA68FE4D335F}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD39AC7B-5B20-E5F2-5CE0-EA68FE4D335F}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{12069A2F-3462-3A81-0A2F-5D7DA63688F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12069A2F-3462-3A81-0A2F-5D7DA63688F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12069A2F-3462-3A81-0A2F-5D7DA63688F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12069A2F-3462-3A81-0A2F-5D7DA63688F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
