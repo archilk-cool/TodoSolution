@@ -1,4 +1,5 @@
 import { AnimatePresence } from "framer-motion";
+import { Moon, Sun } from "lucide-react"; // pretty icons
 import React, { useEffect, useRef, useState } from "react";
 import { createTodo, deleteTodo, getTodos, updateTodo } from "./api/todoApi";
 import EmptyState from "./components/EmptyState";
@@ -12,11 +13,45 @@ export default function App() {
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
 
+   // NEW: theme state
+   const [theme, setTheme] = useState("light");
+
    const firstLoadRef = useRef(true);
 
-   // -------------------------------------------------
+   // --------------------------------------------
+   // THEME INITIALIZATION
+   // --------------------------------------------
+   useEffect(() => {
+      // Load saved theme
+      const saved = localStorage.getItem("theme");
+
+      if (saved === "dark" || saved === "light") {
+         setTheme(saved);
+         document.documentElement.classList.toggle("dark", saved === "dark");
+      }
+      else {
+         // default to light
+         document.documentElement.classList.remove("dark");
+      }
+   }, []);
+
+   // --------------------------------------------
+   // TOGGLE THEME
+   // --------------------------------------------
+   function toggleTheme() {
+      const newTheme = theme === "light" ? "dark" : "light";
+      setTheme(newTheme);
+
+      // Update HTML root
+      document.documentElement.classList.toggle("dark", newTheme === "dark");
+
+      // Persist
+      localStorage.setItem("theme", newTheme);
+   }
+
+   // --------------------------------------------
    // Load tasks (initial load only)
-   // -------------------------------------------------
+   // --------------------------------------------
    async function load() {
       setLoading(true);
       setError(null);
@@ -24,7 +59,6 @@ export default function App() {
       try {
          const data = await getTodos();
 
-         // Only delay UI on very first page load
          if (firstLoadRef.current) {
             await new Promise((resolve) => setTimeout(resolve, 1200));
             firstLoadRef.current = false;
@@ -51,9 +85,9 @@ export default function App() {
       load();
    }, []);
 
-   // -------------------------------------------------
+   // --------------------------------------------
    // Backend-first: Add
-   // -------------------------------------------------
+   // --------------------------------------------
    async function handleAddTodo(data) {
       if (!data?.text?.trim()) return;
 
@@ -66,7 +100,6 @@ export default function App() {
                : null,
          });
 
-         // Update local state after backend success
          setTodos((prev) => [
             ...prev,
             {
@@ -83,9 +116,9 @@ export default function App() {
       }
    }
 
-   // -------------------------------------------------
+   // --------------------------------------------
    // Backend-first: Toggle Complete
-   // -------------------------------------------------
+   // --------------------------------------------
    async function handleToggleTodo(id) {
       const existing = todos.find((t) => t.id === id);
       if (!existing) return;
@@ -99,30 +132,22 @@ export default function App() {
             dueDate: existing.dueDate,
          });
 
-         // If server returns null (204), fallback to our expected update
          const completed = updated?.isCompleted ?? !existing.completed;
 
          setTodos((prev) =>
             prev.map((t) =>
-               t.id === id
-                  ? {
-                     ...t,
-                     completed,
-                  }
-                  : t
+               t.id === id ? { ...t, completed } : t
             )
          );
-      }
-      catch (err) {
+      } catch (err) {
          console.error(err);
          setError("Failed to update task.");
       }
    }
 
-
-   // -------------------------------------------------
+   // --------------------------------------------
    // Backend-first: Edit Task
-   // -------------------------------------------------
+   // --------------------------------------------
    async function handleEditTodo(id, updates) {
       const existing = todos.find((t) => t.id === id);
       if (!existing) return;
@@ -138,7 +163,6 @@ export default function App() {
             dueDate: merged.dueDate,
          });
 
-         // If backend returns null, fallback to merged local version
          const server = updated || {};
 
          setTodos((prev) =>
@@ -159,40 +183,31 @@ export default function App() {
                   : t
             )
          );
-      }
-      catch (err) {
+      } catch (err) {
          console.error(err);
          setError("Failed to update task.");
       }
    }
 
-   // -------------------------------------------------
+   // --------------------------------------------
    // Backend-first: Delete
-   // -------------------------------------------------
+   // --------------------------------------------
    async function handleDeleteTodo(id) {
       try {
          await deleteTodo(id);
-
-         // Remove only if backend succeeded
          setTodos((prev) => prev.filter((t) => t.id !== id));
-      }
-      catch (err) {
+      } catch (err) {
          console.error(err);
          setError("Failed to delete task.");
       }
    }
 
-   // -------------------------------------------------
+   // --------------------------------------------
    // Filtering
-   // -------------------------------------------------
+   // --------------------------------------------
    const filteredTodos = todos.filter((todo) => {
-      if (filter === "active") {
-         return !todo.completed;
-      }
-
-      if (filter === "completed") {
-         return todo.completed;
-      }
+      if (filter === "active") return !todo.completed;
+      if (filter === "completed") return todo.completed;
       return true;
    });
 
@@ -202,32 +217,49 @@ export default function App() {
       completed: todos.filter((t) => t.completed).length,
    };
 
-   // -------------------------------------------------
+   // --------------------------------------------
    // Loading Screen
-   // -------------------------------------------------
+   // --------------------------------------------
    if (loading) {
       return (
-         <div className="min-h-screen bg-muted/80 flex items-center justify-center">
-            <div className="rounded-xl bg-background border border-border px-4 py-3 shadow-sm text-[18px] text-muted-foreground">
+         <div className="min-h-screen bg-muted/80 dark:bg-black flex items-center justify-center transition-colors">
+            <div className="rounded-xl bg-background border border-border px-4 py-3 shadow-sm text-[18px] text-muted-foreground dark:text-gray-300 dark:bg-gray-900">
                Loading tasks...
             </div>
          </div>
       );
    }
 
-   // -------------------------------------------------
+   // --------------------------------------------
    // UI
-   // -------------------------------------------------
+   // --------------------------------------------
    return (
-      <div className="min-h-screen bg-muted/80 text-foreground flex items-start justify-center px-4 py-10">
-         <div className="w-full max-w-3xl rounded-2xl bg-background border border-border shadow-lg px-6 py-7">
-            <header className="mb-6 flex items-baseline justify-between gap-4">
+      <div className="min-h-screen bg-muted/80 dark:bg-black text-foreground dark:text-gray-200 flex items-start justify-center px-4 py-10 transition-colors">
+
+         <div className="w-full max-w-3xl rounded-2xl bg-background dark:bg-gray-900 border border-border dark:border-gray-700 shadow-lg px-6 py-7 transition-colors">
+
+            {/* HEADER with DARK MODE TOGGLE */}
+            <header className="mb-6 flex items-center justify-between">
                <div>
-                  <h1 className="text-2xl font-semibold tracking-tight">My To-Do List</h1>
-                  <p className="text-lg text-muted-foreground">
+                  <h1 className="text-2xl font-semibold tracking-tight">
+                     My To-Do List
+                  </h1>
+                  <p className="text-lg text-muted-foreground dark:text-gray-400">
                      {counts.active} active • {counts.all} total
                   </p>
                </div>
+
+               {/* Toggle button */}
+               <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-full border border-border dark:border-gray-600 hover:bg-accent hover:bg-opacity-20 transition"
+               >
+                  {theme === "light" ? (
+                     <Moon className="w-5 h-5" />
+                  ) : (
+                     <Sun className="w-5 h-5" />
+                  )}
+               </button>
             </header>
 
             {error && (
@@ -239,13 +271,11 @@ export default function App() {
             <div className="space-y-6">
                <TaskInput onAdd={handleAddTodo} />
 
-               <div className="flex items-center justify-between gap-3">
-                  <FilterTabs
-                     activeFilter={filter}
-                     onFilterChange={setFilter}
-                     counts={counts}
-                  />
-               </div>
+               <FilterTabs
+                  activeFilter={filter}
+                  onFilterChange={setFilter}
+                  counts={counts}
+               />
 
                <div className="space-y-2">
                   {filteredTodos.length === 0 ? (
