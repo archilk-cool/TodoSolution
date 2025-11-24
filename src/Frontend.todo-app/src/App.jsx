@@ -89,7 +89,31 @@ export default function App() {
    // Backend-first: Add
    // --------------------------------------------
    async function handleAddTodo(data) {
-      if (!data?.text?.trim()) return;
+      // --- BASIC VALIDATION (matches backend DTO) ---
+      if (!data?.text?.trim()) {
+         setError("Title is required.");
+         return;
+      }
+
+      if (data.text.trim().length < 3) {
+         setError("Title must be at least 3 characters.");
+         return;
+      }
+
+      if (data.text.trim().length > 200) {
+         setError("Title cannot exceed 200 characters.");
+         return;
+      }
+
+      if (data.description && data.description.length > 2000) {
+         setError("Description cannot exceed 2000 characters.");
+         return;
+      }
+
+      if (data.dueDate && new Date(data.dueDate) < new Date()) {
+         setError("Due date cannot be in the past.");
+         return;
+      }
 
       try {
          const saved = await createTodo({
@@ -100,6 +124,7 @@ export default function App() {
                : null,
          });
 
+         // --- Update in-memory list after backend success ---
          setTodos((prev) => [
             ...prev,
             {
@@ -110,11 +135,37 @@ export default function App() {
                completed: !!saved.isCompleted,
             },
          ]);
+
+         setError(null); // clear any previous error
+
       } catch (err) {
          console.error(err);
+
+         // --- Translate backend validation errors into friendly text ---
+         const backend = err?.response?.data?.errors;
+
+         if (backend) {
+            if (backend.Title?.length) {
+               setError("Title must be between 3 and 200 characters.");
+               return;
+            }
+
+            if (backend.Description?.length) {
+               setError("Description is too long.");
+               return;
+            }
+
+            if (backend.DueDate?.length) {
+               setError("Due date cannot be in the past.");
+               return;
+            }
+         }
+
+         // fallback message
          setError("Failed to create task.");
       }
    }
+
 
    // --------------------------------------------
    // Backend-first: Toggle Complete
