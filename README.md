@@ -15,6 +15,20 @@ A modern full-stack **Todo** application built with:
 
 ## ✨ Features
 
+---
+
+## 📸 Application Screenshots
+
+Below are two screenshots showcasing the modern design, clean UI, and the light/dark mode support.
+
+### 🌅 Light Mode
+![Light Mode UI](todo-screenshot1.png)
+
+### 🌙 Dark Mode
+![Dark Mode UI](todo-screenshot2.png)
+
+
+
 - CRUD operations for Todos
 - API versioning (`/api/v1/...`)
 - Global error handling middleware
