@@ -236,6 +236,7 @@ const TaskItem = React.forwardRef(
                            <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="Edit task"
                               className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                               onClick={() => setIsEditing(true)}
                            >
@@ -245,6 +246,7 @@ const TaskItem = React.forwardRef(
                            <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="Delete task"
                               className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                               onClick={() => onDelete(id)}
                            >
