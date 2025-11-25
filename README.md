@@ -390,12 +390,12 @@ npm run dev
 - `http://localhost:5173`
 - `https://localhost:7295/swagger`
 
-### ⚠️ Certificate Error Fix (When browsing to localhost) (optional)
+#### ⚠️ Certificate Error Fix (When browsing to localhost) (optional)
 
 If you see Not Secure error when browsing to localhost try this:
 
 ```bash
-dotnet dev-certs https --trust
+- dotnet dev-certs https --trust
 ```
 
 4. Run tests:
