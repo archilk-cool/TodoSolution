@@ -160,6 +160,43 @@ Uses EFCore InMemory provider + mock services.
 
 ---
 
+
+---
+
+## ⚠️ PowerShell Execution Policy Fix (Before Running `npm install`)
+
+If you see this error when running `npm install`:
+
+```
+npm.ps1 cannot be loaded because it is not digitally signed.
+```
+
+Windows PowerShell is blocking npm due to execution policy restrictions.
+
+### ✅ Recommended Fix
+Run PowerShell **as Administrator**:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Press **Y** to confirm, then run:
+
+```powershell
+npm install
+```
+
+### ✅ Fix for Current Session Only
+If you prefer not to modify your system policy:
+
+```powershell
+powershell -ExecutionPolicy Bypass
+npm install
+```
+
+This allows npm to run safely for development setups.
+
+
 # 🖥 Frontend (React + Vite)
 
 ### Install
@@ -424,6 +461,17 @@ The separation of layers — API → DTOs → Service → Data — enables this 
 
 
 ---
+
+## 💡 UI Enhancements Implemented During Development
+
+### ⏳ Artificial Delay for Loading Indicator Demonstration
+To demonstrate the loading indicator behavior on the frontend, an **artificial ~1 second delay** was added during the initial page load.  
+This helps visually confirm that the loading state, spinner, and UI transitions all work as expected.
+
+### 🌗 Light & Dark Mode Toggle
+A **Light/Dark mode toggle** was implemented to allow users to switch themes dynamically.  
+The UI fully supports theme-aware styling, ensuring consistent readability and aesthetics in both modes.
+
 
 # 📄 License
 
