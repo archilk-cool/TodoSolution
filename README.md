@@ -1,187 +1,306 @@
-# 🌟 TodoSolution --- Modern Full‑Stack Todo Application
+# Full-Stack Todo App: Vite + React + .NET 9 API
 
-A beautifully structured, full‑stack **Todo List application**
-featuring:
+A modern full-stack **Todo** application built with:
 
--   🖥 **ASP.NET Core 9 Web API** (C#, EF Core, SQLite)
--   ⚛️ **React + Vite** frontend
--   🗄 **SQLite** local database
--   🔄 Seamless CORS‑enabled interaction
--   🚀 Modern development workflow
+- **.NET 9** Web API (C#)
+- **React + Vite** frontend (SPA)
+- **SQLite** persistence (`todo.db`)
+- **Tailwind + shadcn/ui**-style components for a clean, modern UI
+- **xUnit** + **EF Core InMemory** tests for the backend
+- **Jest + React Testing Library** tests for the frontend
 
-This project is ideal for learning clean architecture, API design, React
-front‑end development, and cross‑stack integration.
+> Designed as a realistic, portfolio-quality sample for showcasing full-stack skills (API design, testing, modern frontend, and clean architecture).
 
-------------------------------------------------------------------------
+---
 
-## 📂 Project Structure
+## ✨ Features
 
-    TodoSolution/
-    │
-    ├── src/
-    │   ├── Backend.TodoApi/       # ASP.NET Core API
-    │   └── Frontend.todo-app/     # React + Vite frontend
-    │
-    ├── TodoSolution.sln            # Visual Studio solution
-    └── README.md
+- CRUD operations for Todos
+- API versioning (`/api/v1/...`)
+- Global error handling middleware
+- EF Core + SQLite database
+- Swagger/OpenAPI documentation
+- Fully modern React SPA using Vite
+- Component-based UI with clean structure
+- Backend + frontend test suites (xUnit + Jest)
+- Detailed API response models
+- Environment configuration support
+- CORS properly configured for local dev
 
-------------------------------------------------------------------------
+---
 
-## ⚡ Getting Started
+## 🏗 Architecture Overview
 
-### 🔧 Requirements
+```mermaid
+graph LR
+  Browser[React + Vite SPA] -->|REST / JSON| Api[.NET 9 Web API]
+  Api --> Db[(SQLite todo.db)]
+```
 
--   .NET 9 SDK\
--   Node.js 18+\
--   npm or yarn
+---
 
-------------------------------------------------------------------------
+## 📁 Project Structure
 
-# 🛠 Backend --- ASP.NET Core 9 API
+```text
+TodoSolution/
+├─ TodoSolution.sln
+├─ src/
+│  ├─ Backend.TodoApi/
+│  │  ├─ Controllers/
+│  │  │  └─ V1/
+│  │  │     └─ TodoController.cs
+│  │  ├─ Data/
+│  │  │  └─ AppDbContext.cs
+│  │  ├─ Dtos/
+│  │  │  └─ V1/
+│  │  ├─ Mappings/
+│  │  ├─ Middleware/
+│  │  │  └─ ErrorHandlingMiddleware.cs
+│  │  ├─ Models/
+│  │  │  └─ TodoItem.cs
+│  │  ├─ Services/
+│  │  │  ├─ ITodoService.cs
+│  │  │  └─ TodoService.cs
+│  │  ├─ Swagger/
+│  │  ├─ Program.cs
+│  │  ├─ appsettings.json
+│  └─ Frontend.todo-app/
+│     ├─ package.json
+│     ├─ vite.config.js
+│     ├─ jest.config.cjs
+│     ├─ jest.setup.js
+│     ├─ index.html
+│     └─ src/
+│        ├─ api/
+│        │  └─ todoApi.js
+│        ├─ components/
+│        │  ├─ TaskInput.jsx
+│        │  ├─ TaskItem.jsx
+│        │  ├─ EmptyState.jsx
+│        │  └─ __tests__/
+│        ├─ globals.css
+│        ├─ styles.css
+│        └─ main.jsx
+└─ tests/
+   └─ Backend.TodoApi.Tests/
+      ├─ Backend.TodoApi.Tests.csproj
+      ├─ TodoServiceTests.cs
+      └─ TodoControllerTests.cs
+```
 
-### 📌 Location
+---
 
-    src/Backend.TodoApi
+## 🔧 Tech Stack
 
-### ▶️ Run the API
+### Backend
+- .NET 9 Web API
+- Entity Framework Core + SQLite
+- API Versioning
+- Swagger/OpenAPI
+- xUnit test framework
 
-``` bash
+### Frontend
+- React + Vite
+- Tailwind CSS
+- Jest + React Testing Library
+- JSDOM environment
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- .NET 9 SDK
+- Node.js 18+
+- npm
+
+Clone and enter the solution:
+
+```bash
+git clone <your-repo-url>
+cd TodoSolution
+```
+
+---
+
+# ⚙️ Backend (.NET 9 API)
+
+### Install & Run
+
+```bash
 cd src/Backend.TodoApi
 dotnet restore
-dotnet build
 dotnet run
 ```
 
-By default, the API starts on: - **HTTP:** `http://localhost:5295` -
-**HTTPS:** `https://localhost:7295`
+API runs at:
 
-### 📘 Swagger UI
+- `https://localhost:7295`
+- `http://localhost:5295`
 
-Open in browser:
+### Swagger
+Visit:
 
-    https://localhost:7295/swagger
+```
+https://localhost:7295/swagger
+```
 
-You get interactive API docs with full testing support.
+---
 
-------------------------------------------------------------------------
+## 🧪 Backend Tests (xUnit)
 
-# 🖥 Frontend --- React + Vite
+Run all backend tests:
 
-### 📌 Location
+```bash
+cd tests/Backend.TodoApi.Tests
+dotnet test
+```
 
-    src/Frontend.todo-app
+Uses EFCore InMemory provider + mock services.
 
-### ▶️ Run the Frontend
+---
 
-``` bash
+# 🖥 Frontend (React + Vite)
+
+### Install
+
+```bash
 cd src/Frontend.todo-app
 npm install
+```
+
+### Run Dev Server
+
+```bash
 npm run dev
 ```
 
-Default development URL:
+Runs at:
 
-    http://localhost:5173
-
-------------------------------------------------------------------------
-
-# 🔗 Connecting Frontend & Backend
-
-The frontend communicates with the API via:
-
-    https://localhost:7295/api/todo
-
-CORS is already configured on the backend for local development.
-
-------------------------------------------------------------------------
-
-# 🗃 Database --- SQLite
-
-Your database file is:
-
-    src/Backend.TodoApi/todo.db
-
-If you want a fresh DB: 1. Delete `todo.db` 2. Run backend again --- EF
-Core recreates it automatically.
-
-------------------------------------------------------------------------
-
-# 📡 API Endpoints
-
-  Method   Endpoint           Description
-  -------- ------------------ -----------------
-  GET      `/api/todo`        Get all todos
-  GET      `/api/todo/{id}`   Get todo by ID
-  POST     `/api/todo`        Create new todo
-  PUT      `/api/todo/{id}`   Update todo
-  DELETE   `/api/todo/{id}`   Delete todo
-
-------------------------------------------------------------------------
-
-# 🎨 Screenshots (Placeholders)
-
-Add your own screenshots here!
-
-    ![Frontend UI](docs/images/frontend.png)
-    ![Swagger UI](docs/images/swagger.png)
-
-------------------------------------------------------------------------
-
-# 🚀 Production Build
-
-### Backend:
-
-``` bash
-dotnet publish -c Release
+```
+http://localhost:5173
 ```
 
-### Frontend:
+### Environment Variables
 
-``` bash
-npm run build
+Create `.env`:
+
+```
+VITE_API_URL=https://localhost:7295
 ```
 
-Output goes into the `dist/` directory.
+---
 
-------------------------------------------------------------------------
+## 🧪 Frontend Tests (Jest)
 
-# 🧱 Architecture Overview
+Run all tests:
 
-    React (Vite)
-        ↓ fetch()
-    ASP.NET Core API
-        ↓ EF Core
-    SQLite Database
+```bash
+npm test
+```
 
-Clean, minimal, and easy to extend.
+Run with coverage:
 
-------------------------------------------------------------------------
+```bash
+npm test -- --coverage
+```
 
-# 📦 Tech Stack Badges
+---
 
-![.NET](https://img.shields.io/badge/.NET-9.0-blueviolet)
-![React](https://img.shields.io/badge/React-18-blue)
-![Vite](https://img.shields.io/badge/Vite-Fast-orange)
-![SQLite](https://img.shields.io/badge/SQLite-Embedded-lightgrey)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
+# 📡 API Reference (v1)
 
-------------------------------------------------------------------------
+Base URL:
 
-# 🤝 Contributing
+```
+https://localhost:7295/api/v1/todo
+```
 
-Pull requests are welcome!\
-Feel free to open an issue for discussions or suggestions.
+## 📘 Models
 
-------------------------------------------------------------------------
+### TodoCreateDto
+```json
+{
+  "title": "string",
+  "description": "string (optional)",
+  "dueDate": "2025-12-31T23:59:59Z"
+}
+```
 
-# 📄 License
+### TodoUpdateDto
+```json
+{
+  "title": "string",
+  "description": "string",
+  "isCompleted": true,
+  "dueDate": "2025-12-31T23:59:59Z"
+}
+```
 
-Distributed under the **MIT License**.\
-Use, modify, and share freely.
+### TodoResponseDto
+```json
+{
+  "id": 1,
+  "title": "string",
+  "description": "string or null",
+  "isCompleted": false,
+  "createdAt": "2025-11-24T10:01:23Z",
+  "dueDate": "2025-12-31T23:59:59Z or null"
+}
+```
 
-------------------------------------------------------------------------
+---
 
-# 🌐 Contact
+# 📑 Endpoints
 
-Have ideas or questions?\
-Open an Issue --- happy to help!
+## GET /api/v1/todo
+Returns all todos.
+
+## POST /api/v1/todo
+Creates a new todo.
+
+Example:
+```http
+POST /api/v1/todo
+Content-Type: application/json
+
+{
+  "title": "Write README",
+  "description": "Full instructions",
+  "dueDate": "2025-12-01T18:00:00Z"
+}
+```
+
+## PUT /api/v1/todo/{id}
+Updates a todo.
+
+## DELETE /api/v1/todo/{id}
+Deletes a todo.
+
+---
+
+# 🔁 Dev Workflow
+
+1. Run backend:
+```bash
+dotnet run
+```
+
+2. Run frontend:
+```bash
+npm run dev
+```
+
+3. Open:
+- `http://localhost:5173`
+- `https://localhost:7295/swagger`
+
+4. Run tests:
+```bash
+dotnet test
+npm test
+```
+
+---
+
+# 📝 License
+Add your preferred license (MIT recommended).
