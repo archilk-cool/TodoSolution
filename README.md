@@ -222,9 +222,6 @@ Uses EFCore InMemory provider + mock services.
 
 ---
 
-
----
-
 ## ⚠️ PowerShell Execution Policy Fix (Before Running `npm install`)
 
 If you see this error when running `npm install`:
@@ -392,6 +389,14 @@ npm run dev
 3. Open:
 - `http://localhost:5173`
 - `https://localhost:7295/swagger`
+
+## ⚠️ Certificate Error Fix (When browsing to localhost) (optional)
+
+If you see Not Secure error when browsing to localhost try this:
+
+```powershell
+dotnet dev-certs https --trust
+```
 
 4. Run tests:
 ```bash
