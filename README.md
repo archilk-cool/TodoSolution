@@ -15,19 +15,6 @@ A modern full-stack **Todo** application built with:
 
 ## ✨ Features
 
----
-
-## 📸 Application Screenshots
-
-Below are two screenshots showcasing the modern design, clean UI, and the light/dark mode support.
-
-### 🌅 Light Mode
-<img width="453" height="606" alt="todo-screenshot1" src="https://github.com/user-attachments/assets/2d351c88-1c8f-45c1-9ef5-bb51cd68c52a" />
-
-### 🌙 Dark Mode
-<img width="417" height="428" alt="todo-screenshot2" src="https://github.com/user-attachments/assets/13a8d9b8-5ab8-481a-a784-bfb30f6fd063" />
-
-
 - CRUD operations for Todos
 - API versioning (`/api/v1/...`)
 - Global error handling middleware
@@ -472,6 +459,15 @@ The separation of layers — API → DTOs → Service → Data — enables this 
 
 ---
 
+## 📸 Application Screenshots
+
+Below are two screenshots showcasing the modern design, clean UI, and the light/dark mode support.
+
+### 🌅 Light Mode
+<img width="453" height="606" alt="todo-screenshot1" src="https://github.com/user-attachments/assets/2d351c88-1c8f-45c1-9ef5-bb51cd68c52a" />
+
+### 🌙 Dark Mode
+<img width="417" height="428" alt="todo-screenshot2" src="https://github.com/user-attachments/assets/13a8d9b8-5ab8-481a-a784-bfb30f6fd063" />
 
 ---
 
