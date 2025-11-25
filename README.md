@@ -110,6 +110,68 @@ TodoSolution/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
+### 📦 Manual Installations Required
+
+Before running the backend or frontend, ensure the following are installed manually:
+
+#### 1. .NET 9 SDK  
+Download and install from Microsoft:  
+➡️ https://dotnet.microsoft.com/download/dotnet/9.0
+
+Verify installation:  
+```bash
+dotnet --version
+```
+
+#### 2. Node.js 18 (LTS Recommended)  
+Required for the React + Vite frontend.
+
+Download from:  
+➡️ https://nodejs.org/en/download/prebuilt-installer
+
+Or direct installers:  
+- Windows/macOS/Linux: https://nodejs.org/dist/latest-v18.x
+
+Verify installation:  
+```bash
+node -v
+npm -v
+```
+
+#### 3. PowerShell Execution Policy Fix (Windows Only)
+If you encounter this error when running npm install:
+
+```
+npm.ps1 cannot be loaded because it is not digitally signed.
+```
+
+Run PowerShell **as Administrator**:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Or for current session only:
+
+```powershell
+powershell -ExecutionPolicy Bypass
+npm install
+```
+
+#### 4. SQLite Tools (Optional)
+You can inspect `todo.db` manually by installing the SQLite CLI:
+
+➡️ https://www.sqlite.org/download.html
+
+Open DB manually:
+```bash
+sqlite3 todo.db
+```
+
+#### 5. Git (Required for Cloning)
+➡️ https://git-scm.com/downloads
+
 - .NET 9 SDK
 - Node.js 18+
 - npm
