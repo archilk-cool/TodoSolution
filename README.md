@@ -403,8 +403,6 @@ npm test
 
 ## 📌 Next Steps / Extensions
 
-Some natural extensions you could mention or implement:
-
 - User authentication + multi-user task lists  
 - Support for multiple Todo lists per user  
 - Tagging, prioritization, and filtering  
@@ -415,7 +413,6 @@ Some natural extensions you could mention or implement:
 - Replace SQLite with PostgreSQL or SQL Server  
 - Add real-time updates using SignalR  
 - Offline-first support with local storage sync  
-
 
 
 ---
