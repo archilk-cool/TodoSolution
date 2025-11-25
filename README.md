@@ -124,14 +124,14 @@ Verify installation:
 dotnet --version
 ```
 
-#### 2. Node.js 18 (LTS Recommended)  
+#### 2. Node.js 24 (LTS Recommended)  
 Required for the React + Vite frontend.
 
 Download from:  
 ➡️ https://nodejs.org/en/download/prebuilt-installer
 
 Or direct installers:  
-- Windows/macOS/Linux: https://nodejs.org/dist/latest-v18.x
+- Windows/macOS/Linux: https://nodejs.org/dist/latest-v24.x
 
 Verify installation:  
 ```bash
