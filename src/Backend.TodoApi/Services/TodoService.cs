@@ -1,4 +1,4 @@
-﻿using Backend.TodoApi.Data;
+using Backend.TodoApi.Data;
 using Backend.TodoApi.Dtos.V1;
 using Backend.TodoApi.Mappings;
 using Microsoft.EntityFrameworkCore;
@@ -31,13 +31,14 @@ public class TodoService : ITodoService
    }
 
    /// <summary>
-   /// Retrieves all to-do items ordered by Id.
+   /// Retrieves all to-do items ordered by Id, excluding archived items.
    /// </summary>
    /// <returns>A sequence of <see cref="TodoResponseDto"/> representing stored items.</returns>
    public async Task<IEnumerable<TodoResponseDto>> GetAllAsync()
    {
       // Project entities to DTOs in the database query to avoid loading unnecessary data.
       return await _db.Todos
+          .Where(t => !t.IsArchived)
           .OrderBy(t => t.Id)
           .Select(t => t.ToDto())
           .ToListAsync();
@@ -108,6 +109,36 @@ public class TodoService : ITodoService
 
       // Remove tracked entity and save changes.
       _db.Todos.Remove(entity);
+      await _db.SaveChangesAsync();
+      return true;
+   }
+
+   /// <summary>
+   /// Archives a to-do item by setting IsArchived to true.
+   /// </summary>
+   /// <param name="id">Identifier of the item to archive.</param>
+   /// <returns>True when the item existed and was archived; otherwise false.</returns>
+   public async Task<bool> ArchiveAsync(int id)
+   {
+      var entity = await _db.Todos.FindAsync(id);
+      if (entity == null) return false;
+
+      entity.IsArchived = true;
+      await _db.SaveChangesAsync();
+      return true;
+   }
+
+   /// <summary>
+   /// Restores an archived to-do item by setting IsArchived to false.
+   /// </summary>
+   /// <param name="id">Identifier of the item to restore.</param>
+   /// <returns>True when the item existed and was restored; otherwise false.</returns>
+   public async Task<bool> RestoreAsync(int id)
+   {
+      var entity = await _db.Todos.FindAsync(id);
+      if (entity == null) return false;
+
+      entity.IsArchived = false;
       await _db.SaveChangesAsync();
       return true;
    }

@@ -1,4 +1,4 @@
-﻿using Backend.TodoApi.Dtos.V1;
+using Backend.TodoApi.Dtos.V1;
 
 namespace Backend.TodoApi.Services;
 
@@ -56,4 +56,18 @@ public interface ITodoService
    /// <c>true</c> when the item existed and was deleted; otherwise <c>false</c>.
    /// </returns>
    Task<bool> DeleteAsync(int id);
+
+   /// <summary>
+   /// Archives a to-do item by setting IsArchived to true.
+   /// </summary>
+   /// <param name="id">Identifier of the item to archive.</param>
+   /// <returns><c>true</c> when the item existed and was archived; otherwise <c>false</c>.</returns>
+   Task<bool> ArchiveAsync(int id);
+
+   /// <summary>
+   /// Restores an archived to-do item by setting IsArchived to false.
+   /// </summary>
+   /// <param name="id">Identifier of the item to restore.</param>
+   /// <returns><c>true</c> when the item existed and was restored; otherwise <c>false</c>.</returns>
+   Task<bool> RestoreAsync(int id);
 }

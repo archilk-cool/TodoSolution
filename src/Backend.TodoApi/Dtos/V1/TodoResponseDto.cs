@@ -1,4 +1,4 @@
-﻿namespace Backend.TodoApi.Dtos.V1;
+namespace Backend.TodoApi.Dtos.V1;
 
 /// <summary>
 /// DTO returned to clients representing a persisted to-do item.
@@ -34,4 +34,9 @@ public class TodoResponseDto
    /// Optional UTC due date/time for the item.
    /// </summary>
    public DateTime? DueDate { get; set; }
+
+   /// <summary>
+   /// Indicates whether the item has been archived (hidden from the normal list).
+   /// </summary>
+   public bool IsArchived { get; set; }
 }

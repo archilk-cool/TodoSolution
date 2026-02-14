@@ -55,5 +55,13 @@ namespace Backend.TodoApi.Models
         /// Nullable — use when the item has a deadline. Prefer UTC for consistency.
         /// </remarks>
         public DateTime? DueDate { get; set; }
+
+        /// <summary>
+        /// Indicates whether the to-do item has been archived (hidden from the normal list).
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Archived items can be restored via the restore endpoint.
+        /// </remarks>
+        public bool IsArchived { get; set; }
     }
 }

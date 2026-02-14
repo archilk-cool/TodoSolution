@@ -91,4 +91,22 @@ public class TodoController : ControllerBase
    [HttpDelete("{id:int}")]
    public async Task<IActionResult> Delete(int id)
        => await _service.DeleteAsync(id) ? NoContent() : NotFound();
+
+   /// <summary>
+   /// Archives a to-do item (sets IsArchived to true). Archived items are excluded from the normal list.
+   /// </summary>
+   /// <param name="id">Identifier of the item to archive.</param>
+   /// <returns>204 No Content when successful; 404 Not Found when the item does not exist.</returns>
+   [HttpPost("{id:int}/archive")]
+   public async Task<IActionResult> Archive(int id)
+       => await _service.ArchiveAsync(id) ? NoContent() : NotFound();
+
+   /// <summary>
+   /// Restores an archived to-do item (sets IsArchived to false).
+   /// </summary>
+   /// <param name="id">Identifier of the item to restore.</param>
+   /// <returns>204 No Content when successful; 404 Not Found when the item does not exist.</returns>
+   [HttpPost("{id:int}/restore")]
+   public async Task<IActionResult> Restore(int id)
+       => await _service.RestoreAsync(id) ? NoContent() : NotFound();
 }

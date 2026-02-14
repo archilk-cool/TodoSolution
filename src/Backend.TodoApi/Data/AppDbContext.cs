@@ -29,5 +29,13 @@ namespace Backend.TodoApi.Data
         /// at runtime. Query and update through this <see cref="DbSet{TEntity}"/>.
         /// </remarks>
         public DbSet<TodoItem> Todos { get; set; } = null!;
+
+        /// <inheritdoc />
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TodoItem>()
+                .Property(e => e.IsArchived)
+                .HasDefaultValue(false);
+        }
     }
 }

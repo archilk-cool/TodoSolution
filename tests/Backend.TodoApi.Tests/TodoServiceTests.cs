@@ -35,7 +35,7 @@ public class TodoServiceTests
    }
 
    /// <summary>
-   /// GetAllAsync returns all persisted items ordered by Id.
+   /// GetAllAsync returns all non-archived items ordered by Id.
    /// </summary>
    [Fact]
    public async Task GetAllAsync_ReturnsAllItems()
@@ -55,6 +55,27 @@ public class TodoServiceTests
 
       // Assert: both items are returned
       Assert.Equal(2, list.Count());
+   }
+
+   /// <summary>
+   /// GetAllAsync excludes archived items.
+   /// </summary>
+   [Fact]
+   public async Task GetAllAsync_ExcludesArchivedItems()
+   {
+      using var db = CreateInMemoryContext();
+      db.Todos.AddRange(
+         new TodoItem { Title = "Visible", CreatedAt = DateTime.UtcNow, IsArchived = false },
+         new TodoItem { Title = "Archived", CreatedAt = DateTime.UtcNow, IsArchived = true }
+      );
+      await db.SaveChangesAsync();
+
+      var svc = new TodoService(db);
+
+      var list = await svc.GetAllAsync();
+
+      Assert.Single(list);
+      Assert.Equal("Visible", list.First().Title);
    }
 
    /// <summary>
@@ -226,6 +247,74 @@ public class TodoServiceTests
       var ok = await svc.DeleteAsync(99999);
 
       // Assert
+      Assert.False(ok);
+   }
+
+   /// <summary>
+   /// ArchiveAsync sets IsArchived to true and returns true when the entity exists.
+   /// </summary>
+   [Fact]
+   public async Task ArchiveAsync_ReturnsTrue_WhenExists()
+   {
+      using var db = CreateInMemoryContext();
+      var item = new TodoItem { Title = "ToArchive", CreatedAt = DateTime.UtcNow };
+      db.Todos.Add(item);
+      await db.SaveChangesAsync();
+
+      var svc = new TodoService(db);
+
+      var ok = await svc.ArchiveAsync(item.Id);
+
+      Assert.True(ok);
+      var persisted = await db.Todos.FindAsync(item.Id);
+      Assert.True(persisted!.IsArchived);
+   }
+
+   /// <summary>
+   /// ArchiveAsync returns false when the entity does not exist.
+   /// </summary>
+   [Fact]
+   public async Task ArchiveAsync_ReturnsFalse_WhenNotFound()
+   {
+      using var db = CreateInMemoryContext();
+      var svc = new TodoService(db);
+
+      var ok = await svc.ArchiveAsync(99999);
+
+      Assert.False(ok);
+   }
+
+   /// <summary>
+   /// RestoreAsync sets IsArchived to false and returns true when the entity exists.
+   /// </summary>
+   [Fact]
+   public async Task RestoreAsync_ReturnsTrue_WhenExists()
+   {
+      using var db = CreateInMemoryContext();
+      var item = new TodoItem { Title = "Archived", CreatedAt = DateTime.UtcNow, IsArchived = true };
+      db.Todos.Add(item);
+      await db.SaveChangesAsync();
+
+      var svc = new TodoService(db);
+
+      var ok = await svc.RestoreAsync(item.Id);
+
+      Assert.True(ok);
+      var persisted = await db.Todos.FindAsync(item.Id);
+      Assert.False(persisted!.IsArchived);
+   }
+
+   /// <summary>
+   /// RestoreAsync returns false when the entity does not exist.
+   /// </summary>
+   [Fact]
+   public async Task RestoreAsync_ReturnsFalse_WhenNotFound()
+   {
+      using var db = CreateInMemoryContext();
+      var svc = new TodoService(db);
+
+      var ok = await svc.RestoreAsync(99999);
+
       Assert.False(ok);
    }
 }

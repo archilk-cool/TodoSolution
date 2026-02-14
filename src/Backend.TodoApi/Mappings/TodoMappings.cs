@@ -1,4 +1,4 @@
-﻿using Backend.TodoApi.Models;
+using Backend.TodoApi.Models;
 using Backend.TodoApi.Dtos.V1;
 
 namespace Backend.TodoApi.Mappings;
@@ -32,7 +32,8 @@ public static class TodoMappings
           Description = item.Description,
           IsCompleted = item.IsCompleted,
           CreatedAt = item.CreatedAt,
-          DueDate = item.DueDate
+          DueDate = item.DueDate,
+          IsArchived = item.IsArchived
        };
 
    /// <summary>

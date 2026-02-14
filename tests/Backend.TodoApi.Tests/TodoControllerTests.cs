@@ -193,4 +193,68 @@ public class TodoControllerTests
       // Assert
       Assert.IsType<NotFoundResult>(result);
    }
+
+   /// <summary>
+   /// Verifies Archive returns 204 NoContent when the service indicates success.
+   /// </summary>
+   [Fact]
+   public async Task Archive_ReturnsNoContent_WhenTrue()
+   {
+      var mock = new Mock<ITodoService>();
+      mock.Setup(s => s.ArchiveAsync(1)).ReturnsAsync(true);
+
+      var ctl = new TodoController(mock.Object);
+
+      var result = await ctl.Archive(1);
+
+      Assert.IsType<NoContentResult>(result);
+   }
+
+   /// <summary>
+   /// Verifies Archive returns 404 NotFound when the item does not exist.
+   /// </summary>
+   [Fact]
+   public async Task Archive_ReturnsNotFound_WhenFalse()
+   {
+      var mock = new Mock<ITodoService>();
+      mock.Setup(s => s.ArchiveAsync(999)).ReturnsAsync(false);
+
+      var ctl = new TodoController(mock.Object);
+
+      var result = await ctl.Archive(999);
+
+      Assert.IsType<NotFoundResult>(result);
+   }
+
+   /// <summary>
+   /// Verifies Restore returns 204 NoContent when the service indicates success.
+   /// </summary>
+   [Fact]
+   public async Task Restore_ReturnsNoContent_WhenTrue()
+   {
+      var mock = new Mock<ITodoService>();
+      mock.Setup(s => s.RestoreAsync(1)).ReturnsAsync(true);
+
+      var ctl = new TodoController(mock.Object);
+
+      var result = await ctl.Restore(1);
+
+      Assert.IsType<NoContentResult>(result);
+   }
+
+   /// <summary>
+   /// Verifies Restore returns 404 NotFound when the item does not exist.
+   /// </summary>
+   [Fact]
+   public async Task Restore_ReturnsNotFound_WhenFalse()
+   {
+      var mock = new Mock<ITodoService>();
+      mock.Setup(s => s.RestoreAsync(999)).ReturnsAsync(false);
+
+      var ctl = new TodoController(mock.Object);
+
+      var result = await ctl.Restore(999);
+
+      Assert.IsType<NotFoundResult>(result);
+   }
 }
