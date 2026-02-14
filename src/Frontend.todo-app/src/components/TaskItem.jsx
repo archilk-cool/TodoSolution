@@ -5,12 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { Calendar, Check, FileText, Pencil, Trash2, X } from "lucide-react";
+import { Archive, ArchiveRestore, Calendar, Check, FileText, Pencil, Trash2, X } from "lucide-react";
 import React, { useState } from "react";
 
 const TaskItem = React.forwardRef(
    (
-      { id, text, description, dueDate, completed, onToggle, onEdit, onDelete },
+      { id, text, description, dueDate, completed, isArchived, onToggle, onEdit, onDelete, onArchive, onRestore },
       ref
    ) => {
       const [isEditing, setIsEditing] = useState(false);
@@ -233,6 +233,32 @@ const TaskItem = React.forwardRef(
                               isHovered ? "opacity-100" : "opacity-0"
                            )}
                         >
+                           {isArchived ? (
+                              onRestore && (
+                                 <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Restore task"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                    onClick={() => onRestore(id)}
+                                 >
+                                    <ArchiveRestore className="!h-5 !w-5" />
+                                 </Button>
+                              )
+                           ) : (
+                              onArchive && (
+                                 <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Archive task"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+                                    onClick={() => onArchive(id)}
+                                 >
+                                    <Archive className="!h-5 !w-5" />
+                                 </Button>
+                              )
+                           )}
+
                            <Button
                               variant="ghost"
                               size="icon"

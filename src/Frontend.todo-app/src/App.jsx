@@ -1,7 +1,7 @@
 import { AnimatePresence } from "framer-motion";
 import { Moon, Sun } from "lucide-react"; // pretty icons
 import React, { useEffect, useRef, useState } from "react";
-import { createTodo, deleteTodo, getTodos, updateTodo } from "./api/todoApi";
+import { archiveTodo, createTodo, deleteTodo, getArchivedTodos, getTodos, restoreTodo, updateTodo } from "./api/todoApi";
 import EmptyState from "./components/EmptyState";
 import FilterTabs from "./components/FilterTabs";
 import TaskInput from "./components/TaskInput";
@@ -9,9 +9,11 @@ import TaskItem from "./components/TaskItem";
 
 export default function App() {
    const [todos, setTodos] = useState([]);
+   const [archivedTodos, setArchivedTodos] = useState([]);
    const [filter, setFilter] = useState("all");
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
+   const [showArchived, setShowArchived] = useState(false);
 
    // NEW: theme state
    const [theme, setTheme] = useState("light");
@@ -70,6 +72,7 @@ export default function App() {
             description: t.description || "",
             dueDate: t.dueDate ? new Date(t.dueDate) : null,
             completed: !!t.isCompleted,
+            isArchived: !!t.isArchived,
          }));
 
          setTodos(mapped);
@@ -84,6 +87,30 @@ export default function App() {
    useEffect(() => {
       load();
    }, []);
+
+   // Load archived tasks when toggle is shown
+   async function loadArchived() {
+      try {
+         const data = await getArchivedTodos();
+         const mapped = (data || []).map((t) => ({
+            id: t.id,
+            text: t.title,
+            description: t.description || "",
+            dueDate: t.dueDate ? new Date(t.dueDate) : null,
+            completed: !!t.isCompleted,
+            isArchived: true,
+         }));
+         setArchivedTodos(mapped);
+      } catch (err) {
+         console.error(err);
+         setError("Failed to load archived tasks.");
+      }
+   }
+
+   useEffect(() => {
+      if (showArchived) loadArchived();
+      else setArchivedTodos([]);
+   }, [showArchived]);
 
    // --------------------------------------------
    // Backend-first: Add
@@ -133,6 +160,7 @@ export default function App() {
                description: saved.description || "",
                dueDate: saved.dueDate ? new Date(saved.dueDate) : null,
                completed: !!saved.isCompleted,
+               isArchived: !!saved.isArchived,
             },
          ]);
 
@@ -171,7 +199,7 @@ export default function App() {
    // Backend-first: Toggle Complete
    // --------------------------------------------
    async function handleToggleTodo(id) {
-      const existing = todos.find((t) => t.id === id);
+      const existing = todos.find((t) => t.id === id) ?? archivedTodos.find((t) => t.id === id);
       if (!existing) return;
 
       try {
@@ -190,6 +218,11 @@ export default function App() {
                t.id === id ? { ...t, completed } : t
             )
          );
+         setArchivedTodos((prev) =>
+            prev.map((t) =>
+               t.id === id ? { ...t, completed } : t
+            )
+         );
       } catch (err) {
          console.error(err);
          setError("Failed to update task.");
@@ -200,7 +233,7 @@ export default function App() {
    // Backend-first: Edit Task
    // --------------------------------------------
    async function handleEditTodo(id, updates) {
-      const existing = todos.find((t) => t.id === id);
+      const existing = todos.find((t) => t.id === id) ?? archivedTodos.find((t) => t.id === id);
       if (!existing) return;
 
       const merged = { ...existing, ...updates };
@@ -215,24 +248,20 @@ export default function App() {
          });
 
          const server = updated || {};
+         const updatedItem = {
+            id: server.id ?? merged.id,
+            text: server.title ?? merged.text,
+            description: server.description ?? merged.description,
+            dueDate: server.dueDate ? new Date(server.dueDate) : merged.dueDate,
+            completed: server.isCompleted !== undefined ? server.isCompleted : merged.completed,
+            isArchived: merged.isArchived,
+         };
 
          setTodos((prev) =>
-            prev.map((t) =>
-               t.id === id
-                  ? {
-                     id: server.id ?? t.id,
-                     text: server.title ?? merged.text,
-                     description: server.description ?? merged.description,
-                     dueDate: server.dueDate
-                        ? new Date(server.dueDate)
-                        : merged.dueDate,
-                     completed:
-                        server.isCompleted !== undefined
-                           ? server.isCompleted
-                           : merged.completed,
-                  }
-                  : t
-            )
+            prev.map((t) => (t.id === id ? updatedItem : t))
+         );
+         setArchivedTodos((prev) =>
+            prev.map((t) => (t.id === id ? { ...updatedItem, isArchived: true } : t))
          );
       } catch (err) {
          console.error(err);
@@ -247,9 +276,43 @@ export default function App() {
       try {
          await deleteTodo(id);
          setTodos((prev) => prev.filter((t) => t.id !== id));
+         setArchivedTodos((prev) => prev.filter((t) => t.id !== id));
       } catch (err) {
          console.error(err);
          setError("Failed to delete task.");
+      }
+   }
+
+   // --------------------------------------------
+   // Archive / Restore
+   // --------------------------------------------
+   async function handleArchiveTodo(id) {
+      try {
+         await archiveTodo(id);
+         const archived = todos.find((t) => t.id === id);
+         if (archived) {
+            setTodos((prev) => prev.filter((t) => t.id !== id));
+            if (showArchived) {
+               setArchivedTodos((prev) => [...prev, { ...archived, isArchived: true }]);
+            }
+         }
+      } catch (err) {
+         console.error(err);
+         setError("Failed to archive task.");
+      }
+   }
+
+   async function handleRestoreTodo(id) {
+      try {
+         await restoreTodo(id);
+         const restored = archivedTodos.find((t) => t.id === id);
+         if (restored) {
+            setArchivedTodos((prev) => prev.filter((t) => t.id !== id));
+            setTodos((prev) => [...prev, { ...restored, isArchived: false }]);
+         }
+      } catch (err) {
+         console.error(err);
+         setError("Failed to restore task.");
       }
    }
 
@@ -342,6 +405,17 @@ export default function App() {
                   counts={counts}
                />
 
+               {/* Toggle to show/hide archived tasks */}
+               <label className="flex items-center gap-2 cursor-pointer text-base text-muted-foreground dark:text-gray-400 hover:text-foreground dark:hover:text-gray-200">
+                  <input
+                     type="checkbox"
+                     checked={showArchived}
+                     onChange={(e) => setShowArchived(e.target.checked)}
+                     className="h-4 w-4 rounded border-border"
+                  />
+                  <span>Show archived tasks</span>
+               </label>
+
                <div className="space-y-2">
                   {filteredTodos.length === 0 ? (
                      <EmptyState filter={filter} />
@@ -355,14 +429,50 @@ export default function App() {
                               description={todo.description}
                               dueDate={todo.dueDate}
                               completed={todo.completed}
+                              isArchived={false}
                               onToggle={handleToggleTodo}
                               onEdit={handleEditTodo}
                               onDelete={handleDeleteTodo}
+                              onArchive={handleArchiveTodo}
+                              onRestore={handleRestoreTodo}
                            />
                         ))}
                      </AnimatePresence>
                   )}
                </div>
+
+               {/* Archived tasks section */}
+               {showArchived && (
+                  <div className="space-y-2 pt-4 border-t border-border dark:border-gray-700">
+                     <h3 className="text-base font-semibold text-muted-foreground dark:text-gray-400">
+                        Archived ({archivedTodos.length})
+                     </h3>
+                     {archivedTodos.length === 0 ? (
+                        <p className="text-sm text-muted-foreground dark:text-gray-500">
+                           No archived tasks.
+                        </p>
+                     ) : (
+                        <AnimatePresence mode="popLayout">
+                           {archivedTodos.map((todo) => (
+                              <TaskItem
+                                 key={todo.id}
+                                 id={todo.id}
+                                 text={todo.text}
+                                 description={todo.description}
+                                 dueDate={todo.dueDate}
+                                 completed={todo.completed}
+                                 isArchived={true}
+                                 onToggle={handleToggleTodo}
+                                 onEdit={handleEditTodo}
+                                 onDelete={handleDeleteTodo}
+                                 onArchive={handleArchiveTodo}
+                                 onRestore={handleRestoreTodo}
+                              />
+                           ))}
+                        </AnimatePresence>
+                     )}
+                  </div>
+               )}
             </div>
          </div>
       </div>

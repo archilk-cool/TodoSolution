@@ -45,6 +45,18 @@ public class TodoService : ITodoService
    }
 
    /// <summary>
+   /// Retrieves all archived to-do items ordered by Id.
+   /// </summary>
+   public async Task<IEnumerable<TodoResponseDto>> GetArchivedAsync()
+   {
+      return await _db.Todos
+          .Where(t => t.IsArchived)
+          .OrderBy(t => t.Id)
+          .Select(t => t.ToDto())
+          .ToListAsync();
+   }
+
+   /// <summary>
    /// Retrieves a single to-do item by identifier.
    /// </summary>
    /// <param name="id">Numeric id of the item to fetch.</param>

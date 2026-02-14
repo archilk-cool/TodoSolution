@@ -37,6 +37,14 @@ public class TodoController : ControllerBase
        => Ok(await _service.GetAllAsync());
 
    /// <summary>
+   /// Retrieves all archived to-do items.
+   /// </summary>
+   /// <returns>200 OK with a list of archived <see cref="TodoResponseDto"/>.</returns>
+   [HttpGet("archived")]
+   public async Task<ActionResult<IEnumerable<TodoResponseDto>>> GetArchived()
+       => Ok(await _service.GetArchivedAsync());
+
+   /// <summary>
    /// Retrieves a single to-do item by its identifier.
    /// </summary>
    /// <param name="id">Numeric identifier of the to-do item.</param>

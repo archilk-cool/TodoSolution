@@ -12,12 +12,20 @@ namespace Backend.TodoApi.Services;
 public interface ITodoService
 {
    /// <summary>
-   /// Retrieves all to-do items.
+   /// Retrieves all to-do items (excluding archived).
    /// </summary>
    /// <returns>
    /// A sequence of <see cref="TodoResponseDto"/> representing persisted to-do items.
    /// </returns>
    Task<IEnumerable<TodoResponseDto>> GetAllAsync();
+
+   /// <summary>
+   /// Retrieves all archived to-do items.
+   /// </summary>
+   /// <returns>
+   /// A sequence of <see cref="TodoResponseDto"/> representing archived items.
+   /// </returns>
+   Task<IEnumerable<TodoResponseDto>> GetArchivedAsync();
 
    /// <summary>
    /// Retrieves a single to-do item by its identifier.
